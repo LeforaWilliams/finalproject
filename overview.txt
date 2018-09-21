@@ -1,0 +1,9 @@
+1. build scene
+	build seawad, chorals
+2. add music
+3. make shit swim
+4. add fish meshes
+4.1 When hover over fish, follow the fish around and have text next to it,
+5. add school of fish
+6. entry screen with water reflection
+6. react vr

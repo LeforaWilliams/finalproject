@@ -1,1 +1,1 @@
-# finalproject
+# Final Project at Spiced Academy
