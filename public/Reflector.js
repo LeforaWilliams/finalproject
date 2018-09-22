@@ -185,15 +185,15 @@ THREE.Reflector = function(geometry, options) {
 
         var currentRenderTarget = renderer.getRenderTarget();
 
-        var currentVrEnabled = renderer.vr.enabled;
+        // var currentVrEnabled = renderer.vr.enabled;
         var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
 
-        renderer.vr.enabled = false; // Avoid camera modification and recursion
+        // renderer.vr.enabled = false; // Avoid camera modification and recursion
         renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
 
         renderer.render(scene, virtualCamera, renderTarget, true);
 
-        renderer.vr.enabled = currentVrEnabled;
+        // renderer.vr.enabled = currentVrEnabled;
         renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
 
         renderer.setRenderTarget(currentRenderTarget);
