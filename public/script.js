@@ -78,7 +78,7 @@ scene.add(water);
 /*######ORBIT CONTROLS###########*/
 
 var orbit = new THREE.OrbitControls(camera, renderer.domElement);
-orbit.enableZoom = false;
+orbit.enableZoom = true;
 
 var render = function() {
     requestAnimationFrame(render);
