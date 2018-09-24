@@ -1,4 +1,5 @@
-var fish;
+var fish, fish2, fish3, fish4, fish5, fish6, fish7, fish8, fish9, fish10, whale;
+
 /*#####SCENE#######*/
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(
@@ -30,27 +31,40 @@ scene.add(testMesh);
 
 /*######CORAL FISH OBJECT########*/
 var loader = new THREE.GLTFLoader();
-loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
-    console.log("GLTFMODEL DATA ", model);
-    model.scene.traverse(function(child) {
-        if (child.isMesh) {
-            fish = child;
 
-            console.log("WE ARE HERE", fish);
-            fish.scale.set(0.01, 0.01, 0.01);
-            fish.position.set(0, -50, 0);
-            scene.add(fish);
-            scene.add(fish);
+/*########WHALE OBJECT###########*/
+loader.load("/assets/models/blue_whale_-_textured/scene.gltf", function(m) {
+    console.log("WHALE DATA", m);
+    // m.scene &&
+    m.scene.traverse(function(child) {
+        // m.traverse(function(child) {
+        // console.log("WHALE CHILD", child.isMesh);
+        if (child.isMesh) {
+            whale = child;
+            whale.scale.set(0.01, 0.01, 0.01);
+            whale.position.set(0, -70, 0);
+            scene.add(whale);
         }
     });
+});
 
-    // fish.scene.position.set(0, -40, 0);
-    // model.scene.position.y = -2;
-    // model.scene.position.x = -2;
+loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
+    model.scene.traverse(function(child) {
+        // console.log('FISH MESH CHILD',child.isMesh);
+        if (child.isMesh) {
+            console.log("FISH MESH CHILD IN IF", child);
+            fish = child;
+            fish2 = fish.clone();
+            fish.scale.set(0.01, 0.01, 0.01);
+            fish2.scale.set(0.01, 0.01, 0.01);
 
-    // model.scene.scale.x = 30;
-    // model.scene.scale.y = 30;
-    // model.scene.scale.z = 30;
+            fish.position.set(0, -50, 0);
+            fish2.position.set(40, -80, -100);
+
+            scene.add(fish);
+            scene.add(fish2);
+        }
+    });
 });
 
 // /*######SKYBOX#######*/
@@ -115,6 +129,7 @@ var render = function() {
     testMesh.rotation.x += 0.005;
     testMesh.rotation.y += 0.005;
     testMesh.position.z += 0.09;
+
     renderer.render(scene, camera);
 };
 render();
