@@ -9,7 +9,10 @@ var rfish2,
     stats,
     fishPivot,
     fishPivot2,
-    fishPivot3;
+    fishPivot3,
+    fishPivot4,
+    fishPivot5,
+    fishPivot6;
 var coralfish = [];
 var coralfish2 = [];
 var blueFish = [];
@@ -83,6 +86,13 @@ loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
 });
 
 /*###### SECOND CORAL FISH OBJECT########*/
+fishPivot4 = new THREE.Object3D();
+scene.add(fishPivot4);
+fishPivot5 = new THREE.Object3D();
+scene.add(fishPivot5);
+fishPivot6 = new THREE.Object3D();
+scene.add(fishPivot6);
+
 loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
     model.scene.traverse(function(child) {
         if (child.isMesh) {
@@ -94,7 +104,17 @@ loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
                 coralfish2[i].position.y = Math.floor(Math.random() * -1000);
                 coralfish2[i].position.z = Math.floor(Math.random() * 1000);
 
-                scene.add(coralfish2[i]);
+                if (i < 10) {
+                    coralfish2[i].rotation.y = 180;
+
+                    fishPivot4.add(coralfish2[i]);
+                } else if (i < 20) {
+                    // coralfish[i].rotation.y = 180;
+                    fishPivot5.add(coralfish2[i]);
+                } else {
+                    coralfish2[i].rotation.y = 360;
+                    fishPivot6.add(coralfish2[i]);
+                }
             }
         }
     });
@@ -119,18 +139,38 @@ loader.load("/assets/models/coral1/scene.gltf", function(model) {
 /*######REGULAR FISH OBJECT########*/
 var bluePivot = new THREE.Object3D();
 scene.add(bluePivot);
+
+var bluePivot2 = new THREE.Object3D();
+scene.add(bluePivot2);
+
+var bluePivot3 = new THREE.Object3D();
+scene.add(bluePivot3);
+
+// var bluePivot = new THREE.Object3D();
+// var bluePivot = new THREE.Object3D();
+// var bluePivot = new THREE.Object3D();
+
 loader.load("/assets/models/fish/scene.gltf", function(model) {
     model.scene.traverse(function(child) {
         // console.log('FISH MESH CHILD',child.isMesh);
         if (child.isMesh) {
-            for (var i = 0; i < 10; i++) {
-                blueFish[i] = model.scene.clone();
-                blueFish[i].scale.set(40, 15, 15);
-                blueFish[i].position.x = Math.floor(Math.random() * 1050) - 200;
-                blueFish[i].position.y = Math.floor(Math.random() * -500);
-                blueFish[i].position.z = Math.floor(Math.random() * 100);
+            for (var j = 0; j < 30; j++) {
+                blueFish[j] = model.scene.clone();
 
-                bluePivot.add(blueFish[i]);
+                blueFish[j].scale.set(40, 15, 15);
+                blueFish[j].position.x = Math.floor(Math.random() * 1050) - 200;
+                blueFish[j].position.y = Math.floor(Math.random() * -500);
+                blueFish[j].position.z = Math.floor(Math.random() * 100);
+
+                if (j < 10) {
+                    blueFish[j].rotation.y = 160;
+                    bluePivot.add(blueFish[j]);
+                } else if (j < 20) {
+                    blueFish[j].rotation.y = 180;
+                    bluePivot2.add(blueFish[j]);
+                } else {
+                    bluePivot3.add(blueFish[j]);
+                }
             }
             // rfish = child;
             // console.log("REG FISH VERTICIES", rfish.geometry);
@@ -297,6 +337,10 @@ function update() {
 }
 
 var fishPivot3Zdest = 1000;
+var bluePivotZBound = 1000;
+var bluePivot3ZBound = 0;
+
+var cam = camera.rotation.y;
 /*##############RENDER FUNCTION ###################*/
 var render = function() {
     // THREE.GLTFLoader.Shaders.update(scene, camera);
@@ -324,6 +368,7 @@ var render = function() {
 
     fishPivot2.rotation.y += -0.001;
 
+    //BACK AND FORTH SWITCHING ROTATION
     for (var i = 0; i < fishPivot3.children.length; i++)
         if (fishPivot3.children[i].position.z > fishPivot3Zdest) {
             fishPivot3Zdest = -2500;
@@ -336,6 +381,82 @@ var render = function() {
             fishPivot3.children[i].rotation.y = 360;
         }
 
+    //FISH PIVOT 4 MOVING UP
+    if (fishPivot4.position.y < -70) {
+        fishPivot4.position.y += 0.001;
+    }
+    fishPivot4.rotation.y += 0.005;
+
+    //FISH PIVOT 5
+    for (var i = 0; i < fishPivot5.children.length; i++)
+        if (fishPivot5.children[i].position.z > fishPivot3Zdest) {
+            fishPivot3Zdest = -2500;
+            fishPivot5.children[i].rotation.y = -360;
+
+            fishPivot5.children[i].position.z -= 5;
+        } else {
+            fishPivot3Zdest = 2500;
+            fishPivot5.children[i].position.z += 5;
+            fishPivot5.children[i].rotation.y = 360;
+        }
+    fishPivot5.position.x = 0;
+
+    //FISH PIVOT 6
+    for (var i = 0; i < fishPivot6.children.length; i++)
+        if (fishPivot6.children[i].position.z > fishPivot3Zdest) {
+            fishPivot3Zdest = -2500;
+            fishPivot6.children[i].rotation.y = -360;
+
+            fishPivot6.children[i].position.z -= 5;
+        } else {
+            fishPivot3Zdest = 2500;
+            fishPivot6.children[i].position.z += 5;
+            fishPivot6.children[i].rotation.y = 360;
+        }
+    fishPivot6.position.x = -130;
+
+    //BLUE FISH PIVOT 1
+    for (var i = 0; i < bluePivot.children.length; i++)
+        if (bluePivot.children[i].position.x > bluePivotZBound) {
+            bluePivotZBound = -2500;
+            bluePivot.children[i].rotation.y = -360;
+            bluePivot.rotation.y -= 0.0001;
+
+            bluePivot.children[i].position.x -= 5;
+        } else {
+            bluePivotZBound = 2500;
+            bluePivot.children[i].position.x += 5;
+            bluePivot.children[i].rotation.y = 360;
+            bluePivot.rotation.y += 0.0001;
+        }
+
+    // BLUE FISH PIVOT 2
+    for (var i = 0; i < bluePivot2.children.length; i++)
+        if (bluePivot2.children[i].position.x > bluePivotZBound) {
+            bluePivotZBound = -2500;
+            bluePivot2.children[i].rotation.y = 180;
+            bluePivot2.rotation.y += 0.0001;
+
+            bluePivot2.children[i].position.x -= 5;
+        } else {
+            bluePivotZBound = 2500;
+            bluePivot2.children[i].position.x += 5;
+            bluePivot2.children[i].rotation.y = -180;
+            bluePivot2.rotation.y -= 0.0001;
+            // bluePivot2.rotation.y -= 0.0001;
+            // bluePivot2.position.z -= 0.9;
+        }
+
+    //BLUE PIVOT 3
+    if (bluePivot3.position.z < bluePivot3ZBound) {
+        bluePivot3ZBound = 2000;
+        bluePivot3.position.z -= 10;
+        bluePivot3.rotation.y = 180;
+    } else {
+        bluePivot3.position.z += 10;
+        bluePivot3ZBound = -2000;
+        bluePivot.rotation.y = -180;
+    }
     // turtle.position.x -= 0.005;
     // turtle.position.y -= 0.005;
     renderer.render(scene, camera);
