@@ -7,7 +7,9 @@ var rfish2,
     octo,
     pomfish,
     stats,
-    fishPivot;
+    fishPivot,
+    fishPivot2,
+    fishPivot3;
 var coralfish = [];
 var coralfish2 = [];
 var blueFish = [];
@@ -46,31 +48,14 @@ scene.add(light);
 /*##########EXTERNAL OBJECT LOADER##############*/
 var loader = new THREE.GLTFLoader();
 
-/*########WHALE OBJECT###########*/
-// function addChild(child) {
-//     child.scale.set(50, 50, 50);
-//     child.position.set(-30, -150, -80);
-//     scene.add(child);
-// }
-//
-// function allDes(node) {
-//     for (let i = 0; i < node.children.length; i++) {
-//         let child = node.children[i];
-//         addChild(child);
-//
-//         allDes(child);
-//     }
-// }
-
-loader.load("/assets/models/blue_whale_-_textured/scene.gltf", function(m) {
-    m.scene.traverse(function(child) {
-        allDes(child);
-    });
-});
-
 /*######CORAL FISH OBJECT########*/
 fishPivot = new THREE.Object3D();
 scene.add(fishPivot);
+fishPivot2 = new THREE.Object3D();
+scene.add(fishPivot2);
+fishPivot3 = new THREE.Object3D();
+scene.add(fishPivot3);
+
 loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
     model.scene.traverse(function(child) {
         if (child.isMesh) {
@@ -81,8 +66,16 @@ loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
                 coralfish[i].position.x = Math.floor(Math.random() * -1000);
                 coralfish[i].position.y = Math.floor(Math.random() * -1000);
                 coralfish[i].position.z = Math.floor(Math.random() * -1000);
+                if (i < 10) {
+                    fishPivot.add(coralfish[i]);
+                } else if (i < 20) {
+                    coralfish[i].rotation.y = 180;
+                    fishPivot2.add(coralfish[i]);
+                } else {
+                    coralfish[i].rotation.y = 360;
+                    fishPivot3.add(coralfish[i]);
+                }
 
-                fishPivot.add(coralfish[i]);
                 // scene.add(coralfish[i]);
             }
         }
@@ -172,7 +165,6 @@ loader.load("/assets/models/sea_turtle.gltf", function(model) {
 /*######################BUCKLE WHALE###################*/
 var buckle;
 loader.load("/assets/models/bucklewhale.glb", function(model) {
-    console.log("BUCKLE WHALE DATA", model.scene);
     buckle = model.scene;
     buckle.scale.set(400, 400, 400);
 
@@ -304,39 +296,24 @@ function update() {
     }
 }
 
+var fishPivot3Zdest = 1000;
 /*##############RENDER FUNCTION ###################*/
 var render = function() {
     // THREE.GLTFLoader.Shaders.update(scene, camera);
     requestAnimationFrame(render);
 
+    /*################HOCH RUNTER###########################*/
+    // var timer = 0.0001 * Date.now();
     // for (var i = 0; i < coralfish.length; i++) {
-    //     coralfish[i].position.z += Math.PI * -0.09;
-    //     coralfish[i].position.x += Math.PI * -0.09;
-    // coralfish[i].position.y += Math.PI * 0.06;}
-
-    //RAYCASTER CODE- CURRENTLY NOT WORKING
-    // raycaster.setFromCamera(mouse, camera);
-    // var intersects = raycaster.intersectObjects(scene.testMesh);
-    // if (intersects.length > 0) {
-    //     if (INTERSECTED != intersects[0].object) {
-    //         if (INTERSECTED)
-    //             INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
-    //         INTERSECTED = intersects[0].object;
-    //         INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-    //         INTERSECTED.material.emissive.setHex(0xff0000);
-    //     }
+    //     var f = coralfish[i];
+    //     f.position.x = Math.cos(timer + 1);
+    //     f.position.y = -100 * Math.sin(timer + i * 0.05);
+    //     // f.position.z = -300 * Math.sin(timer + i * 1.1);
+    //     f.rotation.y += 0.00001;
     // }
-
-    var timer = 0.0001 * Date.now();
-    for (var i = 0; i < coralfish.length; i++) {
-        var f = coralfish[i];
-        f.position.x = -300 * Math.cos(timer + i);
-        f.position.y = -100 * Math.sin(timer + i * 0.05);
-        // f.position.z = -300 * Math.sin(timer + i * 1.1);
-        f.rotation.y += 0.00001;
-    }
     // If rotation reaches certain point -- chnange to negative else poistiove, do the same the otehr way round, do this to control their movement
-    //
+
+    /*############CIRCULAR MOVEMENT##################*/
     fishPivot.rotation.y += 0.001;
     // fishPivot.rotation.z += 0.009; //Don'T think I want this makes fish move through the water
     fishPivot.rotation.x += 0.00003;
@@ -344,6 +321,20 @@ var render = function() {
     // fishPivot.rotation.y += 0.001;
     // fishPivot.position.y = -100 * Math.sin(timer * 1.1);
     fishPivot.position.x = 0.01;
+
+    fishPivot2.rotation.y += -0.001;
+
+    for (var i = 0; i < fishPivot3.children.length; i++)
+        if (fishPivot3.children[i].position.z > fishPivot3Zdest) {
+            fishPivot3Zdest = -2500;
+            fishPivot3.children[i].rotation.y = -360;
+
+            fishPivot3.children[i].position.z -= 5;
+        } else {
+            fishPivot3Zdest = 2500;
+            fishPivot3.children[i].position.z += 5;
+            fishPivot3.children[i].rotation.y = 360;
+        }
 
     // turtle.position.x -= 0.005;
     // turtle.position.y -= 0.005;

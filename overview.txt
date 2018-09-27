@@ -1,5 +1,5 @@
 1. build scene
-	build seawad, chorals
+	build seawad, corals
 2. add music
 3. make shit swim
 4. add fish meshes
