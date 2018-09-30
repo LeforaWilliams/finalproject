@@ -16,6 +16,12 @@ var rfish2,
 var coralfish = [];
 var coralfish2 = [];
 var blueFish = [];
+var turtle;
+var bunterFish = [];
+var spheres = [];
+
+var audio = document.getElementById("audio");
+audio.play();
 
 // var keyboard = new THREEx.KeyboardState();
 
@@ -37,6 +43,7 @@ var camera = new THREE.PerspectiveCamera(
 camera.position.z = 200;
 camera.position.x = 100;
 camera.position.y = -90;
+camera.fog = new THREE.FogExp2(0x004db2, 0.0025);
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,6 +54,24 @@ var light = new THREE.AmbientLight(0x0ffffff);
 scene.add(light);
 
 /*##########################################################MESHES######################################################*/
+
+//BUBBLES
+var geometry = new THREE.SphereBufferGeometry(100, 32, 16);
+var material = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    envMap: scene.background,
+    refractionRatio: 0.95
+});
+
+for (var i = 0; i < 500; i++) {
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.position.x = Math.random() * 10000 - 5000;
+    mesh.position.y = Math.random() * 0 - 5000;
+    mesh.position.z = Math.random() * 10000 - 5000;
+    mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 0.5 + 1;
+    // scene.add(mesh);
+    spheres.push(mesh);
+}
 
 /*##########EXTERNAL OBJECT LOADER##############*/
 var loader = new THREE.GLTFLoader();
@@ -62,16 +87,16 @@ scene.add(fishPivot3);
 loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
     model.scene.traverse(function(child) {
         if (child.isMesh) {
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < 60; i++) {
                 coralfish[i] = child.clone();
                 var scale = Math.floor(Math.random() * 10) / 1000;
                 coralfish[i].scale.set(scale, scale, scale);
                 coralfish[i].position.x = Math.floor(Math.random() * -1000);
                 coralfish[i].position.y = Math.floor(Math.random() * -1000);
-                coralfish[i].position.z = Math.floor(Math.random() * -1000);
-                if (i < 10) {
+                coralfish[i].position.z = Math.floor(Math.random() * -100);
+                if (i < 20) {
                     fishPivot.add(coralfish[i]);
-                } else if (i < 20) {
+                } else if (i < 40) {
                     coralfish[i].rotation.y = 180;
                     fishPivot2.add(coralfish[i]);
                 } else {
@@ -96,19 +121,19 @@ scene.add(fishPivot6);
 loader.load("/assets/models/coral_fish/scene.gltf", function(model) {
     model.scene.traverse(function(child) {
         if (child.isMesh) {
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < 60; i++) {
                 coralfish2[i] = child.clone();
                 var scale = Math.floor(Math.random() * 10) / 1000;
                 coralfish2[i].scale.set(scale, scale, scale);
                 coralfish2[i].position.x = Math.floor(Math.random() * 1000);
                 coralfish2[i].position.y = Math.floor(Math.random() * -1000);
-                coralfish2[i].position.z = Math.floor(Math.random() * 1000);
+                coralfish2[i].position.z = Math.floor(Math.random() * 100);
 
-                if (i < 10) {
+                if (i < 20) {
                     coralfish2[i].rotation.y = 180;
 
                     fishPivot4.add(coralfish2[i]);
-                } else if (i < 20) {
+                } else if (i < 40) {
                     // coralfish[i].rotation.y = 180;
                     fishPivot5.add(coralfish2[i]);
                 } else {
@@ -127,7 +152,7 @@ loader.load("/assets/models/coral1/scene.gltf", function(model) {
             coral2 = child;
             coral2.scale.set(1.5, 1.5, 1.5);
 
-            coral2.position.set(-100, -300, 0);
+            coral2.position.set(-100, -700, 0);
             // coral2.rotation.x = 0.5;
             coral2.rotation.y = 0.5;
             // coral2.flipY = 0.5;
@@ -154,18 +179,18 @@ loader.load("/assets/models/fish/scene.gltf", function(model) {
     model.scene.traverse(function(child) {
         // console.log('FISH MESH CHILD',child.isMesh);
         if (child.isMesh) {
-            for (var j = 0; j < 30; j++) {
+            for (var j = 0; j < 70; j++) {
                 blueFish[j] = model.scene.clone();
 
                 blueFish[j].scale.set(40, 15, 15);
                 blueFish[j].position.x = Math.floor(Math.random() * 1050) - 200;
-                blueFish[j].position.y = Math.floor(Math.random() * -500);
+                blueFish[j].position.y = Math.floor(Math.random() * -1000);
                 blueFish[j].position.z = Math.floor(Math.random() * 100);
 
-                if (j < 10) {
+                if (j < 25) {
                     blueFish[j].rotation.y = 160;
                     bluePivot.add(blueFish[j]);
-                } else if (j < 20) {
+                } else if (j < 45) {
                     blueFish[j].rotation.y = 180;
                     bluePivot2.add(blueFish[j]);
                 } else {
@@ -189,8 +214,49 @@ loader.load("/assets/models/fish/scene.gltf", function(model) {
     });
 });
 
+/*######################STRIPEFISH ###################*/
+var bunterPivot = new THREE.Object3D();
+bunterPivot.position.z = -100;
+scene.add(bunterPivot);
+var bunterPivot2 = new THREE.Object3D();
+bunterPivot2.position.z = -200;
+scene.add(bunterPivot2);
+
+var bunterPivot3 = new THREE.Object3D();
+// scene.add(bunterPivot3);
+
+loader.load("/assets/models/bunterFish/scene.gltf", function(model) {
+    // stripeFish = model.scene;
+    // model.scene.traverse(function(child) {
+    //     if (child.isMesh) {
+    for (var i = 0; i < 60; i++) {
+        bunterFish[i] = model.scene.clone();
+        bunterFish[i].scale.set(1.4, 1.4, 1.4);
+
+        // var scale = Math.floor(Math.random() * 10) / 1000;
+        // bunterFish[i].scale.set(scale, scale, scale);
+        bunterFish[i].position.x = Math.floor(Math.random() * 500);
+        bunterFish[i].position.y = Math.floor(Math.random() * -1000);
+        bunterFish[i].position.z = Math.floor(Math.random() * 1000);
+
+        if (i < 20) {
+            bunterFish[i].rotation.y = 140;
+            bunterPivot.add(bunterFish[i]);
+        } else if (i < 40) {
+            coralfish[i].rotation.y = 200;
+            bunterPivot2.add(bunterFish[i]);
+        } else {
+            bunterFish[i].rotation.y = 360;
+            bunterPivot3.add(bunterFish[i]);
+        }
+    }
+    //     }
+    // });
+
+    // scene.add(stripefish);
+});
+
 /*######################TURTLE###################*/
-var turtle;
 
 loader.load("/assets/models/sea_turtle.gltf", function(model) {
     turtle = model.scene;
@@ -206,7 +272,11 @@ loader.load("/assets/models/sea_turtle.gltf", function(model) {
 var buckle;
 loader.load("/assets/models/bucklewhale.glb", function(model) {
     buckle = model.scene;
-    buckle.scale.set(400, 400, 400);
+    buckle.scale.set(600, 600, 600);
+    buckle.position.y = -50;
+    buckle.position.z = 0;
+    buckle.rotation.y = -300;
+    buckle.position.x = -2500;
 
     scene.add(buckle);
 });
@@ -219,20 +289,12 @@ loader.load("/assets/models/stingray.glb", function(model) {
     scene.add(stingray);
 });
 
-/*######################STRIPEFISH ###################*/
-var stripefish;
-loader.load("/assets/models/stripefish.glb", function(model) {
-    stripefish = model.scene;
-    stripefish.scale.set(100, 100, 100);
-    scene.add(stripefish);
-});
-
 /*######################SILVER FISH###################*/
 var silverfish;
 loader.load("/assets/models/silverfish.glb", function(model) {
     silverfish = model.scene;
     silverfish.scale.set(100, 100, 100);
-    scene.add(silverfish);
+    // scene.add(silverfish);
 });
 
 // /*######SKYBOX#######*/
@@ -248,7 +310,7 @@ var urls = [
 
 var skyBox = new THREE.CubeTextureLoader().load(urls);
 // scene.background = skyBox;
-scene.background = new THREE.Color(0x121a25);
+scene.background = new THREE.Color(0x026293);
 
 /*#######WATER FLOW MAP###########*/
 /*
@@ -264,7 +326,7 @@ ground.rotation.x = Math.PI * -0.5;
 scene.add(ground);
 
 var textureLoader = new THREE.TextureLoader();
-textureLoader.load("assets/images/night.jpg", function(map) {
+textureLoader.load("assets/images/hell.jpg", function(map) {
     map.wrapS = THREE.RepeatWrapping;
     map.wrapT = THREE.RepeatWrapping;
     map.anisotropy = 16;
@@ -285,16 +347,20 @@ water = new THREE.Water(waterGeometry, {
 
 water.position.y = 54;
 water.rotation.x = Math.PI * 0.5;
+
 scene.add(water);
 
 /*#####MOUSE OVER###########*/
-raycaster = new THREE.Raycaster();
-document.addEventListener("mousemove", onDocumentMouseMove, false);
+var projector = new THREE.Projector();
+var mouseVector = new THREE.Vector3();
 
-function onDocumentMouseMove(event) {
-    event.preventDefault();
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+raycaster = new THREE.Raycaster();
+window.addEventListener("click", onClick, false);
+
+function onClick(e) {
+    mouseVector.x = 2 * (e.clientX / window.innerWidth) - 1;
+    mouseVector.y = 1 - 2 * (e.clientY / window.innerHeight);
+    raycaster = raycaster.setFromCamera(mouseVector.clone(), camera);
 }
 
 /*######ORBIT CONTROLS###########*/
@@ -339,6 +405,24 @@ function update() {
 var fishPivot3Zdest = 1000;
 var bluePivotZBound = 1000;
 var bluePivot3ZBound = 0;
+var turtleBound = -550;
+var buckleBound = 2500;
+var bunterBound = 1000;
+var bunterBound2 = -1300;
+
+// POST PROCESSING
+//Composer
+// var composer = new THREE.EffectComposer(renderer);
+//
+// //Passes
+// var renderPass = new THREE.RenderPass(scene, camera);
+//
+// composer.addPass(renderPass);
+// renderPass.renderToScreen = true;
+//
+// var shaderPass = new THREE.ShaderPass(THREE.Water);
+// composer.addPass(shaderPass);
+// shaderPass.renderToScreen = true;
 
 var cam = camera.rotation.y;
 /*##############RENDER FUNCTION ###################*/
@@ -347,7 +431,7 @@ var render = function() {
     requestAnimationFrame(render);
 
     /*################HOCH RUNTER###########################*/
-    // var timer = 0.0001 * Date.now();
+    var timer = 0.0001 * Date.now();
     // for (var i = 0; i < coralfish.length; i++) {
     //     var f = coralfish[i];
     //     f.position.x = Math.cos(timer + 1);
@@ -457,9 +541,89 @@ var render = function() {
         bluePivot3ZBound = -2000;
         bluePivot.rotation.y = -180;
     }
-    // turtle.position.x -= 0.005;
-    // turtle.position.y -= 0.005;
+
+    //TURTLE
+    if (!turtle) {
+        return;
+    } else {
+        if (turtle.position.y > turtleBound) {
+            turtle.position.y -= 1;
+            turtleBound = -500;
+            turtle.rotation.x = 150;
+            turtle.rotation.y += 0.005;
+        } else {
+            turtle.position.y += 1;
+            turtleBound = -3;
+            turtle.rotation.x = -15;
+            turtle.rotation.y -= 0.005;
+        }
+    }
+
+    if (!buckle) {
+        return;
+    } else {
+        if (buckle.position.x < buckleBound) {
+            //     buckle.position.z += 1.5;
+            buckle.position.x += 10;
+            buckleBound = 2500;
+            buckle.rotation.y = -300;
+
+            //     buckle.rotation.y += 0.001;
+        } else {
+            buckle.position.x -= 10;
+            buckleBound = -2500;
+            buckle.rotation.y = 300;
+        }
+    }
+
+    if (!bunterFish) {
+        return;
+    } else {
+        if (bunterPivot.position.x < bunterBound) {
+            bunterPivot.position.x += 5;
+            bunterPivot.rotation.y = 140;
+            bunterBound = 1000;
+        } else {
+            bunterPivot.position.x -= 5;
+            bunterPivot.rotation.y = -140;
+            bunterBound = -1500;
+        }
+    }
+
+    if (!bunterFish) {
+        return;
+    } else {
+        if (bunterPivot2.position.z > bunterBound2) {
+            bunterPivot2.position.z -= 4.7;
+            bunterPivot2.rotation.y = 200;
+            bunterBound2 = -1300;
+        } else {
+            bunterPivot2.position.z += 4.5;
+            bunterPivot2.rotation.y = -200;
+            bunterBound2 = 1300;
+        }
+    }
+
+    if (!stingray) {
+        return;
+    } else {
+        stingray.rotation.x = -0.5;
+        stingray.rotation.y += 0.0006;
+        stingray.position.y -= 0.6;
+        stingray.position.x += 0.4;
+    }
+
+    // var intersects = raycaster.intersectObjects(scene.children);
+    //
+    // for (var i = 0; i < intersects.length; i++) {
+    //     camera.position.x = intersects[i].position.x;
+    // }
+
+    if (camera.position.y > -650) {
+        camera.position.y -= 1;
+    }
     renderer.render(scene, camera);
+    // composer.render();
 };
 render();
 
